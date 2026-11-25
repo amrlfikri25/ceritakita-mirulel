@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <title>Our Little Love Story — Private Digital Journal</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Sacramento&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Canvas Confetti CDN for celebrations -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        blush: '#FCE7EF',
+                        pinklight: '#F8B4C8',
+                        redromantic: '#D94F70',
+                        reddeep: '#A83250',
+                        offwhite: '#FFF9FA',
+                        premiumblack: '#111111',
+                        charcoal: '#242024'
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        cursive: ['Sacramento', 'cursive']
+                    },
+                    boxShadow: {
+                        'glass': '0 8px 32px 0 rgba(217, 79, 112, 0.12)',
+                        'subtle': '0 10px 30px -10px rgba(17, 17, 17, 0.08)',
+                        'card': '0 15px 35px -5px rgba(36, 32, 36, 0.06)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html, body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #FFF9FA;
+            color: #242024;
+            overflow-x: hidden;
+            overflow-y: auto;
+            min-height: 100%;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-cursive { font-family: 'Sacramento', cursive; }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(248, 180, 200, 0.35);
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            will-change: transform;
+        }
+
+        @keyframes floatUpSmooth {
+            0% {
+                transform: translate3d(0, 0, 0) scale(0.7) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate3d(0, -150px, 0) scale(1.3) rotate(20deg);
+                opacity: 0;
+            }
+        }
+
+        .floating-heart-anim {
+            animation: floatUpSmooth 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: transform, opacity;
+            pointer-events: none;
+        }
+
+        #hero-screen {
+            will-change: transform, opacity;
+            transition: transform 0.75s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.75s cubic-bezier(0.77, 0, 0.175, 1);
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+        }
+
+        .pulse-subtle {
+            animation: pulseSubtle 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            will-change: transform;
+        }
+
+        @keyframes pulseSubtle {
+            0%, 100% { transform: scale3d(1, 1, 1); opacity: 0.9; }
+            50% { transform: scale3d(1.08, 1.08, 1); opacity: 1; }
+        }
+
+        .modal-backdrop {
+            transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity;
+        }
+        .modal-content {
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+            will-change: transform, opacity;
+            transform: translate3d(0, 0, 0);
+        }
+
+        button, a {
+            touch-action: manipulation;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, opacity 0.2s ease;
+        }
+        button:active, a:active {
+            transform: scale3d(0.96, 0.96, 1);
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #FFF9FA; }
+        ::-webkit-scrollbar-thumb { background: #F8B4C8; border-radius: 99px; }
+        ::-webkit-scrollbar-thumb:hover { background: #D94F70; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        @keyframes shakeSmooth {
+            0%, 100% { transform: translate3d(0, 0, 0); }
+            20%, 60% { transform: translate3d(-8px, 0, 0); }
+            40%, 80% { transform: translate3d(8px, 0, 0); }
+        }
+        .animate-shake {
+            animation: shakeSmooth 0.38s ease-in-out;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen text-charcoal antialiased selection:bg-pinklight selection:text-reddeep">
+
+    <div id="particle-container" class="fixed inset-0 pointer-events-none z-50 overflow-hidden"></div>
+
+    <!-- ================================================================= -->
+    <!-- FLOATING MUSIC PLAYER                                             -->
+    <!-- ================================================================= -->
+    <div id="music-player" class="fixed bottom-20 md:bottom-6 right-5 z-50 glass-card p-2.5 rounded-full shadow-glass border border-pinklight/50 flex items-center gap-3 transition-all duration-300">
+        <audio id="bg-music" loop>
+            <source src="Media/Aku Kamu & Semesta.mpeg" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
+        <button id="music-toggle-btn" onclick="toggleMusic()" class="w-10 h-10 rounded-full bg-redromantic text-white flex items-center justify-center shadow-md hover:bg-reddeep transition duration-300 active:scale-90">
+            <i data-lucide="music" id="music-icon" class="w-5 h-5"></i>
+        </button>
+        <div id="music-info" class="hidden sm:flex flex-col pr-3">
+            <span class="text-[11px] font-bold text-premiumblack">Our Song</span>
+            <span id="music-status" class="text-[9px] text-gray-500 uppercase tracking-wider">Tap to Play</span>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- 0. LOGIN OVERLAY SCREEN                                           -->
+    <!-- ================================================================= -->
+    <div id="login-overlay" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gradient-to-br from-blush via-offwhite to-pinklight/30 backdrop-blur-xl transition-all duration-700">
+        <div id="login-card" class="bg-white/95 backdrop-blur-md rounded-3xl p-7 sm:p-8 max-w-md w-full shadow-glass border border-pinklight/50 text-center relative overflow-hidden transform transition-all duration-500">
+            <div class="w-16 h-16 bg-blush text-redromantic rounded-full flex items-center justify-center mx-auto mb-4 border border-pinklight shadow-sm">
+                <i data-lucide="lock" class="w-8 h-8"></i>
+            </div>
+            
+            <span class="text-xs font-semibold tracking-widest text-redromantic uppercase bg-blush px-3 py-1 rounded-full">Private Journal</span>
+            <h2 class="font-serif text-3xl font-bold text-premiumblack mt-3 mb-1">Welcome Back</h2>
+            <p class="text-xs text-gray-500 mb-6">Enter our special secrets to unlock our story</p>
+
+            <form onsubmit="handleLogin(event)" class="space-y-4 text-left">
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Username</label>
+                        <button type="button" onclick="toggleHint('username-hint')" class="text-[10px] text-redromantic font-semibold hover:underline flex items-center gap-1">
+                            <i data-lucide="lightbulb" class="w-3 h-3"></i> Hint
+                        </button>
+                    </div>
+                    <input type="text" id="login-username" placeholder="Enter username..." required class="w-full bg-offwhite border border-pinklight rounded-xl px-4 py-2.5 text-sm text-premiumblack focus:outline-none focus:ring-2 focus:ring-redromantic transition duration-300">
+                    <p id="username-hint" class="hidden text-[11px] text-gray-500 italic mt-1 bg-blush/50 p-2 rounded-lg border border-pinklight/30 transition-all duration-300">
+                        💡 Hint: First place travel together
+                    </p>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Password</label>
+                        <button type="button" onclick="toggleHint('password-hint')" class="text-[10px] text-redromantic font-semibold hover:underline flex items-center gap-1">
+                            <i data-lucide="lightbulb" class="w-3 h-3"></i> Hint
+                        </button>
+                    </div>
+                    <input type="password" id="login-password" placeholder="••••••••" required class="w-full bg-offwhite border border-pinklight rounded-xl px-4 py-2.5 text-sm text-premiumblack focus:outline-none focus:ring-2 focus:ring-redromantic transition duration-300">
+                    <p id="password-hint" class="hidden text-[11px] text-gray-500 italic mt-1 bg-blush/50 p-2 rounded-lg border border-pinklight/30 transition-all duration-300">
+                        💡 Hint: First we chat (DDMMYYYY)
+                    </p>
+                </div>
+
+                <p id="login-error" class="hidden text-xs text-redromantic text-center font-semibold pt-1">
+                    Incorrect username or password. Try again! ❤️
+                </p>
+
+                <button type="submit" class="w-full py-3.5 bg-premiumblack hover:bg-charcoal text-white rounded-xl font-semibold text-xs tracking-widest uppercase transition shadow-lg active:scale-95 flex items-center justify-center gap-2 duration-300">
+                    Unlock Our Story <i data-lucide="key-round" class="w-4 h-4 text-pinklight"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- 1. INTERACTIVE OPENING SCREEN / HERO LANDING                      -->
+    <!-- ================================================================= -->
+    <section id="hero-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-between p-6 bg-gradient-to-b from-offwhite via-blush/40 to-offwhite">
+        
+        <div class="pt-8 text-center">
+            <span class="inline-block px-4 py-1.5 rounded-full text-xs font-semibold tracking-widest text-reddeep bg-blush border border-pinklight/40 uppercase mb-3">
+                Our Digital Journal
+            </span>
+            <h1 class="font-serif text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-premiumblack uppercase">
+                Our Little <span class="text-redromantic italic font-normal lowercase font-cursive text-5xl md:text-7xl lg:text-8xl">Love</span> Story
+            </h1>
+            <p class="mt-3 text-sm md:text-base text-gray-600 font-medium italic tracking-wide max-w-md mx-auto">
+                “Two hearts. One story. Countless memories.”
+            </p>
+        </div>
+
+        <div class="relative my-auto group cursor-pointer" onclick="triggerHeroHeartBurst(event)">
+            <div class="absolute -inset-1.5 bg-gradient-to-r from-pinklight via-redromantic to-blush rounded-2xl blur opacity-40 group-hover:opacity-75 transition duration-500"></div>
+            
+            <div class="relative w-64 h-80 sm:w-72 sm:h-96 rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-white flex flex-col transform group-hover:scale-[1.02] transition-transform duration-500">
+                <img id="hero-couple-img" 
+                     src="Media/sandakan.jpeg" 
+                     alt="Couple Photo Placeholder" 
+                     class="w-full h-full object-cover object-center transform group-hover:scale-105 transition duration-700">
+                
+                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-premiumblack/80 via-premiumblack/30 to-transparent p-4 text-white text-center">
+                    <p class="font-cursive text-2xl text-pinklight">You & Me</p>
+                    <p id="hero-date-tag" class="text-xs font-light text-gray-200 uppercase tracking-widest">Since Feb 14, 2024</p>
+                </div>
+
+                <!-- Butang upload gambar Hero: sentiasa mudah diakses pada skrin sentuh & jelas bila hover -->
+                <button type="button"
+                        onclick="event.stopPropagation(); document.getElementById('hero-img-input').click()" 
+                        class="absolute top-3 right-3 px-2.5 py-2 bg-white/90 hover:bg-white text-premiumblack rounded-full shadow-md backdrop-blur-sm transition-all text-xs font-medium flex items-center gap-1.5 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 active:scale-90" 
+                        title="Change Hero Photo">
+                    <i data-lucide="camera" class="w-4 h-4 text-redromantic"></i>
+                    <span class="text-[11px]">Upload</span>
+                </button>
+                <input type="file" id="hero-img-input" accept="image/*" class="hidden" onchange="uploadHeroImage(event)">
+            </div>
+
+            <div class="flex justify-center -mt-4 relative z-10">
+                <div class="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-redromantic pulse-subtle border border-pinklight">
+                    <i data-lucide="heart" class="w-5 h-5 fill-current"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="pb-8 text-center flex flex-col items-center">
+            <button id="enter-btn" onclick="enterMainStory()" class="px-8 py-4 bg-premiumblack hover:bg-charcoal text-white rounded-full font-semibold text-sm md:text-base tracking-wider shadow-xl hover:shadow-2xl transition-all duration-300 transform active:scale-95 flex items-center gap-3 border border-gray-800">
+                ENTER OUR STORY 
+                <i data-lucide="arrow-right" class="w-5 h-5 text-pinklight"></i>
+            </button>
+            
+            <p class="mt-4 text-xs text-gray-500 font-medium tracking-wide animate-bounce flex items-center gap-1">
+                Scroll down to discover our story <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+            </p>
+        </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- 2. MAIN APPLICATION CONTENT                                       -->
+    <!-- ================================================================= -->
+    <div id="main-content" class="opacity-0 transition-opacity duration-700">
+
+        <!-- FLOATING NAVIGATION BAR -->
+        <header id="desktop-nav" class="fixed top-5 inset-x-0 z-40 hidden md:flex justify-center px-4">
+            <nav class="glass-card px-8 py-3 rounded-full flex items-center gap-8 shadow-glass border border-pinklight/30">
+                <a href="#home" class="nav-link font-medium text-xs tracking-wider uppercase text-premiumblack hover:text-redromantic transition flex items-center gap-1.5 active" data-target="home">
+                    <i data-lucide="heart" class="w-4 h-4"></i> HOME
+                </a>
+                <a href="#counter" class="nav-link font-medium text-xs tracking-wider uppercase text-premiumblack hover:text-redromantic transition flex items-center gap-1.5" data-target="counter">
+                    <i data-lucide="clock" class="w-4 h-4"></i> US
+                </a>
+                <a href="#story" class="nav-link font-medium text-xs tracking-wider uppercase text-premiumblack hover:text-redromantic transition flex items-center gap-1.5" data-target="story">
+                    <i data-lucide="book-open" class="w-4 h-4"></i> STORY
+                </a>
+                <a href="#memories" class="nav-link font-medium text-xs tracking-wider uppercase text-premiumblack hover:text-redromantic transition flex items-center gap-1.5" data-target="memories">
+                    <i data-lucide="image" class="w-4 h-4"></i> MEMORIES
+                </a>
+                <a href="#messages" class="nav-link font-medium text-xs tracking-wider uppercase text-premiumblack hover:text-redromantic transition flex items-center gap-1.5" data-target="messages">
+                    <i data-lucide="mail" class="w-4 h-4"></i> LOVE
+                </a>
+                <a href="#planner" class="nav-link font-medium text-xs tracking-wider uppercase text-premiumblack hover:text-redromantic transition flex items-center gap-1.5" data-target="planner">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i> DATE
+                </a>
+                
+                <button onclick="toggleSettingsModal()" class="ml-2 p-1.5 rounded-full bg-blush text-premiumblack hover:bg-pinklight transition active:scale-90" title="Settings">
+                    <i data-lucide="settings" class="w-4 h-4"></i>
+                </button>
+            </nav>
+        </header>
+
+        <!-- Mobile Bottom Nav -->
+        <nav class="fixed bottom-0 inset-x-0 z-40 md:hidden glass-card border-t border-pinklight/30 px-3 py-2 flex justify-around items-center text-xs">
+            <a href="#home" class="nav-link flex flex-col items-center gap-1 text-premiumblack hover:text-redromantic py-1 active" data-target="home">
+                <i data-lucide="heart" class="w-5 h-5"></i>
+                <span class="text-[10px] uppercase tracking-wider font-semibold">Home</span>
+            </a>
+            <a href="#story" class="nav-link flex flex-col items-center gap-1 text-premiumblack hover:text-redromantic py-1" data-target="story">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
+                <span class="text-[10px] uppercase tracking-wider font-semibold">Story</span>
+            </a>
+            <a href="#memories" class="nav-link flex flex-col items-center gap-1 text-premiumblack hover:text-redromantic py-1" data-target="memories">
+                <i data-lucide="image" class="w-5 h-5"></i>
+                <span class="text-[10px] uppercase tracking-wider font-semibold">Memories</span>
+            </a>
+            <a href="#messages" class="nav-link flex flex-col items-center gap-1 text-premiumblack hover:text-redromantic py-1" data-target="messages">
+                <i data-lucide="mail" class="w-5 h-5"></i>
+                <span class="text-[10px] uppercase tracking-wider font-semibold">Love</span>
+            </a>
+            <a href="#planner" class="nav-link flex flex-col items-center gap-1 text-premiumblack hover:text-redromantic py-1" data-target="planner">
+                <i data-lucide="sparkles" class="w-5 h-5"></i>
+                <span class="text-[10px] uppercase tracking-wider font-semibold">Date</span>
+            </a>
+            <button onclick="toggleMobileMenu()" class="flex flex-col items-center gap-1 text-premiumblack hover:text-redromantic py-1 active:scale-90">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+                <span class="text-[10px] uppercase tracking-wider font-semibold">More</span>
+            </button>
+        </nav>
+
+        <!-- Mobile Menu Overlay Modal -->
+        <div id="mobile-menu-modal" class="fixed inset-0 z-50 bg-premiumblack/80 backdrop-blur-md hidden flex-col justify-center items-center text-white p-6 modal-backdrop">
+            <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 p-2 rounded-full bg-white/10 text-white active:scale-90">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <h3 class="font-serif text-2xl text-pinklight mb-8 italic">Our Journal Menu</h3>
+            <div class="flex flex-col gap-6 text-center text-lg font-medium">
+                <a href="#home" onclick="toggleMobileMenu()" class="hover:text-pinklight transition">Home</a>
+                <a href="#counter" onclick="toggleMobileMenu()" class="hover:text-pinklight transition">Relationship Counter</a>
+                <a href="#story" onclick="toggleMobileMenu()" class="hover:text-pinklight transition">Our Timeline</a>
+                <a href="#memories" onclick="toggleMobileMenu()" class="hover:text-pinklight transition">Memory Gallery</a>
+                <a href="#messages" onclick="toggleMobileMenu()" class="hover:text-pinklight transition">Open When... Letters</a>
+                <a href="#planner" onclick="toggleMobileMenu()" class="hover:text-pinklight transition">Date Idea Generator</a>
+                <button onclick="toggleMobileMenu(); toggleSettingsModal();" class="text-pinklight underline mt-4 text-base">Edit Anniversary Date</button>
+            </div>
+        </div>
+
+        <!-- MAIN HEADER / WELCOME SECTION -->
+        <section id="home" class="pt-24 md:pt-36 pb-12 px-6 max-w-5xl mx-auto text-center">
+            
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blush border border-pinklight text-reddeep text-xs font-semibold uppercase tracking-widest mb-4">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Est. <span id="display-header-date">February 14, 2024</span>
+            </div>
+            <h2 class="font-serif text-3xl md:text-5xl font-bold text-premiumblack mb-4">
+                A Sacred Space for Our Journey
+            </h2>
+            <p class="text-gray-600 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
+                Hi dan Hello sayang, sepanjang kmk kenal sayang, kmk nak bagitau terima kasih sebab masih ada selalu dengan kmk. Terima kasih untuk semua rasa sayang yang dah ada selama ini. Sayang sayang selalu. 
+            </p>
+            <p class="mt-2 font-medium text-gray-800">-El's boyfie-</p>
+
+            <div class="mt-6 mb-8 flex justify-center">
+                <a href="https://wa.me/601117660906?text=Hi%20sayang!%20Kmk%20tengah%20buka%20Our%20Love%20Story%20journal%20sekarang%20%E2%9D%A4%EF%B8%8F" 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   class="inline-flex items-center gap-2.5 px-6 py-3 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full font-semibold text-xs md:text-sm tracking-wider uppercase shadow-md hover:shadow-lg transition-all duration-300 transform active:scale-95">
+                    <i data-lucide="message-circle" class="w-5 h-5 fill-current"></i>
+                    WhatsApp El's Boyfie
+                </a>
+            </div>
+
+            <div class="relative w-full max-w-sm sm:max-w-md mx-auto aspect-square rounded-3xl overflow-hidden shadow-2xl border-4 border-white group">
+                <video autoplay loop muted playsinline class="w-full h-full object-cover">
+                    <source src="Media/lv_0_20261006121413.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="absolute inset-0 bg-gradient-to-t from-premiumblack/40 via-transparent to-transparent pointer-events-none"></div>
+            </div>
+
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- 3. RELATIONSHIP COUNTER                                           -->
+        <!-- ================================================================= -->
+        <section id="counter" class="py-16 px-4 my-12 bg-premiumblack text-white relative overflow-hidden shadow-2xl">
+            <div class="absolute -right-16 -top-16 w-64 h-64 bg-reddeep/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -left-16 -bottom-16 w-64 h-64 bg-pinklight/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="max-w-5xl mx-auto text-center relative z-10 cursor-pointer" onclick="triggerCounterPulse(event)" title="Tap anywhere to pulse our love!">
+                <div class="flex items-center justify-center gap-2 mb-2 text-pinklight">
+                    <i data-lucide="infinity" class="w-6 h-6 animate-pulse"></i>
+                </div>
+                <h3 class="font-serif text-2xl md:text-4xl font-semibold tracking-wider text-white uppercase mb-2">
+                    We've Been Us For...
+                </h3>
+                <p class="text-xs md:text-sm text-gray-400 font-light tracking-widest uppercase mb-10">
+                    Since <span id="counter-start-label" class="text-pinklight font-medium">February 14, 2024</span>
+                </p>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 md:gap-6 max-w-4xl mx-auto">
+                    <div class="bg-charcoal/80 border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg transform hover:scale-105 transition duration-300">
+                        <span id="counter-years" class="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-white">00</span>
+                        <span class="text-[11px] uppercase tracking-widest text-pinklight font-semibold mt-1">Years</span>
+                    </div>
+                    <div class="bg-charcoal/80 border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg transform hover:scale-105 transition duration-300">
+                        <span id="counter-months" class="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-white">00</span>
+                        <span class="text-[11px] uppercase tracking-widest text-pinklight font-semibold mt-1">Months</span>
+                    </div>
+                    <div class="bg-charcoal/80 border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg transform hover:scale-105 transition duration-300">
+                        <span id="counter-days" class="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-white">00</span>
+                        <span class="text-[11px] uppercase tracking-widest text-pinklight font-semibold mt-1">Days</span>
+                    </div>
+                    <div class="bg-charcoal/80 border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg transform hover:scale-105 transition duration-300">
+                        <span id="counter-hours" class="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-white">00</span>
+                        <span class="text-[11px] uppercase tracking-widest text-pinklight font-semibold mt-1">Hours</span>
+                    </div>
+                    <div class="bg-charcoal/80 border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg transform hover:scale-105 transition duration-300">
+                        <span id="counter-minutes" class="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-white">00</span>
+                        <span class="text-[11px] uppercase tracking-widest text-pinklight font-semibold mt-1">Minutes</span>
+                    </div>
+                    <div class="bg-charcoal/80 border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center shadow-lg transform hover:scale-105 transition duration-300 border-redromantic/30">
+                        <span id="counter-seconds" class="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-redromantic">00</span>
+                        <span class="text-[11px] uppercase tracking-widest text-pinklight font-semibold mt-1">Seconds</span>
+                    </div>
+                </div>
+
+                <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <p class="font-cursive text-2xl text-pinklight">“Every second with you matters.”</p>
+                    <button onclick="toggleSettingsModal()" class="px-4 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs text-gray-300 transition flex items-center gap-1.5 border border-white/20 active:scale-95">
+                        <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Change Start Date
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- 4. OUR STORY — INTERACTIVE TIMELINE                               -->
+        <!-- ================================================================= -->
+        <section id="story" class="py-16 px-4 max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <span class="text-xs font-semibold tracking-widest text-redromantic uppercase bg-blush px-3 py-1 rounded-full">Our Milestones</span>
+                <h2 class="font-serif text-3xl md:text-4xl font-bold text-premiumblack mt-2">How It All Began</h2>
+                <p class="text-sm text-gray-500 mt-2">Click on any moment to expand and relive the memory</p>
+            </div>
+
+            <div class="relative border-l-2 border-premiumblack/80 ml-4 sm:ml-32 pl-6 sm:pl-8 space-y-10" id="timeline-container">
+            </div>
+
+            <div class="text-center mt-12">
+                <button onclick="openAddTimelineModal()" class="px-6 py-3 bg-premiumblack hover:bg-charcoal text-white rounded-full text-xs font-semibold uppercase tracking-wider shadow-lg flex items-center gap-2 mx-auto transition duration-300 active:scale-95">
+                    <i data-lucide="plus-circle" class="w-4 h-4 text-pinklight"></i> Add New Milestone
+                </button>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- 5. MEMORY GALLERY & LIGHTBOX                                      -->
+        <!-- ================================================================= -->
+        <section id="memories" class="py-16 px-4 bg-blush/30 border-y border-pinklight/20">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                    <div>
+                        <span class="text-xs font-semibold tracking-widest text-redromantic uppercase bg-white px-3 py-1 rounded-full shadow-sm">Photo Journal</span>
+                        <h2 class="font-serif text-3xl md:text-4xl font-bold text-premiumblack mt-2">Our Memories</h2>
+                    </div>
+
+                    <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-2" id="gallery-tabs">
+                    </div>
+                </div>
+
+                <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+
+                <div class="text-center mt-12">
+                    <button onclick="openAddMemoryModal()" class="px-8 py-3.5 bg-premiumblack hover:bg-charcoal text-white rounded-full font-semibold text-xs tracking-wider uppercase shadow-xl hover:shadow-2xl transition duration-300 flex items-center gap-2 mx-auto active:scale-95">
+                        <i data-lucide="camera" class="w-4 h-4 text-pinklight"></i> Add New Memory
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- 6. OPEN WHEN LETTERS                                              -->
+        <!-- ================================================================= -->
+        <section id="messages" class="py-16 px-4 max-w-5xl mx-auto">
+            <div class="text-center mb-12">
+                <span class="text-xs font-semibold tracking-widest text-redromantic uppercase bg-blush px-3 py-1 rounded-full">Love Notes</span>
+                <h2 class="font-serif text-3xl md:text-4xl font-bold text-premiumblack mt-2">Open When You Need Love</h2>
+                <p class="text-sm text-gray-500 mt-2">Click any envelope to read a special message written just for you</p>
+            </div>
+
+            <div id="letters-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- 7. DATE PLANNER & BUCKET LIST                                     -->
+        <!-- ================================================================= -->
+        <section id="planner" class="py-16 px-4 bg-premiumblack text-white relative">
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center mb-12">
+                    <span class="text-xs font-semibold tracking-widest text-pinklight uppercase bg-white/10 px-3 py-1 rounded-full border border-white/20">Spontaneity & Goals</span>
+                    <h2 class="font-serif text-3xl md:text-4xl font-bold text-white mt-2">Couple's Date Planner & Ideas</h2>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+                    
+                    <div class="bg-charcoal rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl flex flex-col items-center text-center">
+                        <div class="w-12 h-12 rounded-full bg-redromantic/20 text-redromantic flex items-center justify-center mb-4">
+                            <i data-lucide="dices" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-serif text-2xl font-semibold text-white">Can't Decide What to Do?</h3>
+                        <p class="text-xs text-gray-400 mt-1 mb-6">Spin for a random cozy date idea!</p>
+
+                        <div id="random-date-display" class="w-full bg-premiumblack border border-pinklight/30 rounded-2xl p-6 mb-6 flex flex-col items-center justify-center min-h-[140px] text-center transition-all duration-300">
+                            <i data-lucide="sparkles" class="w-6 h-6 text-pinklight mb-2"></i>
+                            <p class="text-lg font-medium text-pinklight italic" id="date-idea-title">“Click the button below!”</p>
+                            <p class="text-xs text-gray-400 mt-1" id="date-idea-desc">Let destiny pick your next romantic adventure.</p>
+                        </div>
+
+                        <button onclick="spinRandomDateIdea()" class="w-full py-3.5 bg-redromantic hover:bg-reddeep text-white rounded-xl font-semibold text-xs tracking-widest uppercase transition shadow-lg flex items-center justify-center gap-2 active:scale-95 duration-300">
+                            <i data-lucide="rotate-cw" class="w-4 h-4"></i> Spin Date Idea!
+                        </button>
+                    </div>
+
+                    <div class="bg-charcoal rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="font-serif text-2xl font-semibold text-white">Our Love Bucket List</h3>
+                                <p class="text-xs text-gray-400">Things we promise to do together</p>
+                            </div>
+                            <span id="bucket-list-progress-text" class="text-xs font-bold text-pinklight bg-white/10 px-3 py-1 rounded-full">0% Done</span>
+                        </div>
+
+                        <div class="w-full bg-premiumblack rounded-full h-2 mb-6 overflow-hidden border border-white/10">
+                            <div id="bucket-progress-bar" class="bg-gradient-to-r from-pinklight to-redromantic h-full w-0 transition-all duration-500"></div>
+                        </div>
+
+                        <div id="bucket-list-items" class="space-y-3 max-h-72 overflow-y-auto pr-2 no-scrollbar">
+                        </div>
+
+                        <div class="flex items-center gap-2 mt-4 pt-4 border-t border-white/10">
+                            <input type="text" id="new-bucket-input" placeholder="Add a new dream..." class="flex-1 bg-premiumblack border border-white/20 rounded-xl px-4 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-pinklight">
+                            <button onclick="addBucketItem()" class="px-4 py-2 bg-pinklight text-premiumblack hover:bg-white rounded-xl text-xs font-bold transition active:scale-95 duration-300">Add</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="py-12 bg-offwhite border-t border-pinklight/30 text-center text-xs text-gray-500 pb-24 md:pb-12">
+            <p class="font-cursive text-3xl text-redromantic mb-2">Forever & Always</p>
+            <p class="font-medium text-gray-700 mb-3">Created with love for Our Little Love Story</p>
+            
+            <div class="mb-4">
+                <a href="https://wa.me/601117660906?text=Hi%20sayang!%20I%20love%20you%20so%20much%20%E2%9D%A4%EF%B8%8F" 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   class="inline-flex items-center gap-1.5 text-xs text-[#25D366] font-semibold hover:underline">
+                    <i data-lucide="message-circle" class="w-4 h-4 fill-current"></i> Chat El's Boyfie on WhatsApp
+                </a>
+            </div>
+
+            <p class="text-[10px] text-gray-400">Private Digital Journal • Persisted Locally</p>
+        </footer>
+
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- MODALS & OVERLAYS                                                 -->
+    <!-- ================================================================= -->
+
+    <!-- SETTINGS MODAL -->
+    <div id="settings-modal" class="fixed inset-0 z-50 bg-premiumblack/70 backdrop-blur-sm hidden flex items-center justify-center p-4 modal-backdrop">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative border border-pinklight modal-content">
+            <button onclick="toggleSettingsModal()" class="absolute top-4 right-4 p-2 rounded-full hover:bg-blush text-gray-500 active:scale-95">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h3 class="font-serif text-2xl font-bold text-premiumblack mb-1">Relationship Settings</h3>
+            <p class="text-xs text-gray-500 mb-6">Configure the exact date when your love story began.</p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Anniversary / Start Date</label>
+                    <input type="date" id="settings-date-input" class="w-full bg-offwhite border border-pinklight rounded-xl px-4 py-2.5 text-sm text-premiumblack focus:outline-none focus:ring-2 focus:ring-redromantic">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Your Names / Title</label>
+                    <input type="text" id="settings-names-input" placeholder="e.g. Alex & Sam" class="w-full bg-offwhite border border-pinklight rounded-xl px-4 py-2.5 text-sm text-premiumblack focus:outline-none focus:ring-2 focus:ring-redromantic">
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end gap-3">
+                <button onclick="toggleSettingsModal()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-semibold">Cancel</button>
+                <button onclick="saveSettings()" class="px-5 py-2 bg-premiumblack hover:bg-charcoal text-white rounded-xl text-xs font-semibold">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD TIMELINE MODAL -->
+    <div id="timeline-modal" class="fixed inset-0 z-50 bg-premiumblack/70 backdrop-blur-sm hidden flex items-center justify-center p-4 modal-backdrop">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative border border-pinklight modal-content max-h-[90vh] overflow-y-auto">
+            <button onclick="closeAddTimelineModal()" class="absolute top-4 right-4 p-2 rounded-full hover:bg-blush text-gray-500 active:scale-95">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h3 class="font-serif text-2xl font-bold text-premiumblack mb-1">Add Story Milestone</h3>
+            <p class="text-xs text-gray-500 mb-6">Add a memorable chapter to your timeline.</p>
+
+            <form id="timeline-form" onsubmit="saveNewTimelineItem(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Title</label>
+                    <input type="text" id="tm-title" placeholder="e.g. Our First Trip Together" required class="w-full bg-offwhite border border-pinklight rounded-xl px-4 py-2 text-sm text-premiumblack focus:outline-none focus:ring-2 focus:ring-redromantic">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Date</label>
+                    <input type="text" id="tm-date" placeholder="e.g. 14 FEB 2025" required class="w-full bg-offwhite border border-pinklight rounded-xl px-4 py-2 text-sm text-premiumblack focus:outline-none focus:ring-2 focus:ring-redromantic">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Location</label>
+                    <input type="text" id="tm-location" placeholder="e.g. Paris, France" class="w-full bg-offwhite border border-pinklight rounded-xl px-4 py-2 text-sm text-premiumblack focus:outline-none focus:ring-2 focus:ring-redromantic">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Upload Photo or Image Path</label>
+                    <input type="file" id="tm-file-input" accept="image/*" class="w-full text-xs text-gray-600 file:mr-3 file:py-2 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blush file:text-reddeep hover:file:bg-pinklight/50 cursor-pointer" onchange="handleTimelineFileUpload(event)">
+                    <input type="text" id="tm-photo" placeholder="Atau masukkan path: Media/MyPhoto.png" class="w-full bg-offwhite border border-pinklight rounded-xl px-4 py-2 text-xs text-premiumblack focus:outline-none focus:ring-2 focus:ring-redromantic mt-2" oninput="updateTimelinePreview(this.value)">
+                    
+                    <div id="tm-preview-box" class="hidden mt-3 rounded-xl overflow-hidden border border-pinklight/50 bg-offwhite p-2">
+                        <p class="text-[10px] uppercase tracking-wider font-semibold text-gray-500 mb-1.5">Pratonton Gambar</p>
+                        <img id="tm-preview-img" src="" alt="Milestone Preview" class="w-full h-36 object-cover rounded-lg">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Description / Short Quote</label>
+                    <textarea id="tm-desc" rows="3" placeholder="What made this moment unforgettable?" required class="w-full bg-offwhite border border-pinklight rounded-xl px-4 py-2 text-sm text-premiumblack focus:outline-none focus:ring-2 focus:ring-redromantic"></textarea>
+                </div>
+
+                <div class="mt-6 flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeAddTimelineModal()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl text-xs font-semibold">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-premiumblack text-white rounded-xl text-xs font-semibold">Save Milestone</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADD MEMORY MODAL -->
+    <div id="memory-modal" class="fixed inset-0 z-50 bg-premiumblack/70 backdrop-blur-sm hidden flex items-center justify-center p-4 modal-backdrop">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative border border-pinklight modal-content max-h-[90vh] overflow-y-auto">
+            <button onclick="closeAddMemoryModal()" class="absolute top-4 right-4 p-2 rounded-full hover:bg-blush text-gray-500 active:scale-95">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h3 class="font-serif text-2xl font-bold text-premiumblack mb-1">Add Photo Memory</h3>
+            <p class="text-xs text-gray-500 mb-6">Upload or link a special photograph.</p>
+
+            <form id="memory-form" onsubmit="saveNewMemoryItem(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Upload Image or Image Path</label>
+                    <input type="file" id="mem-file-input" accept="image/*" class="w-full text-xs text-gray-600 file:mr-3 file:py-2 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blush file:text-reddeep hover:file:bg-pinklight/50 cursor-pointer" onchange="handleMemoryFileUpload(event)">
+                    <input type="text" id="mem-img-url" placeholder="Atau masukkan path: Media/Photo1.png" class="w-full bg-offwhite border border-pinklight rounded-xl px-4 py-2 text-xs text-premiumblack focus:outline-none focus:ring-2 focus:ring-redromantic mt-2" oninput="updateMemoryPreview(this.value)">
+
+                    <div id="mem-preview-box" class="hidden mt-3 rounded-xl overflow-hidden border border-pinklight/50 bg-offwhite p-2">
+                        <p class="text-[10px] uppercase tracking-wider font-semibold text-gray-500 mb-1.5">Pratonton Gambar</p>
+                        <img id="mem-preview-img" src="" alt="Memory Preview" class="w-full h-36 object-cover rounded-lg">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Caption Title</label>
+                    <input type="text" id="mem-title" placeholder="e.g. Sunset Picnic" required class="w-full bg-offwhite border border-pinklight rounded-xl px-4 py-2 text-sm text-premiumblack focus:outline-none focus:ring-2 focus:ring-redromantic">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Category</label>
+                        <select id="mem-category" class="w-full bg-offwhite border border-pinklight rounded-xl px-3 py-2 text-xs text-premiumblack focus:outline-none">
+                            <option value="DATES">DATES</option>
+                            <option value="TRAVEL">TRAVEL</option>
+                            <option value="FOOD">FOOD</option>
+                            <option value="CELEBRATIONS">CELEBRATIONS</option>
+                            <option value="RANDOM">RANDOM MOMENTS</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Date</label>
+                        <input type="text" id="mem-date" placeholder="e.g. Aug 2024" required class="w-full bg-offwhite border border-pinklight rounded-xl px-4 py-2 text-xs text-premiumblack focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Location Tag</label>
+                    <input type="text" id="mem-location" placeholder="e.g. Kyoto, Japan" class="w-full bg-offwhite border border-pinklight rounded-xl px-4 py-2 text-sm text-premiumblack focus:outline-none">
+                </div>
+
+                <div class="mt-6 flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeAddMemoryModal()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl text-xs font-semibold">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-premiumblack text-white rounded-xl text-xs font-semibold">Save Photo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- LIGHTBOX MODAL -->
+    <div id="lightbox-modal" class="fixed inset-0 z-50 bg-premiumblack/95 backdrop-blur-md hidden flex flex-col justify-between p-4 sm:p-8 modal-backdrop">
+        <div class="flex items-center justify-between text-white z-10">
+            <div>
+                <span id="lb-category" class="text-[10px] font-bold uppercase tracking-widest bg-white/10 px-3 py-1 rounded-full text-pinklight">CATEGORY</span>
+                <h4 id="lb-title" class="font-serif text-xl sm:text-2xl font-semibold mt-1">Photo Title</h4>
+            </div>
+            <button onclick="closeLightbox()" class="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition active:scale-95">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <div class="relative flex-1 flex items-center justify-center my-4 overflow-hidden">
+            <button onclick="prevLightboxImage()" class="absolute left-2 sm:left-4 z-10 p-3 rounded-full bg-black/50 hover:bg-black/80 text-white backdrop-blur-sm transition active:scale-95">
+                <i data-lucide="chevron-left" class="w-6 h-6"></i>
+            </button>
+            <img id="lb-img" src="" alt="Enlarged Memory" class="max-h-full max-w-full object-contain rounded-xl shadow-2xl transition-all duration-300">
+            <button onclick="nextLightboxImage()" class="absolute right-2 sm:right-4 z-10 p-3 rounded-full bg-black/50 hover:bg-black/80 text-white backdrop-blur-sm transition active:scale-95">
+                <i data-lucide="chevron-right" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <div class="text-center text-white max-w-xl mx-auto z-10">
+            <div class="flex items-center justify-center gap-4 text-xs text-gray-400 mb-1">
+                <span id="lb-date" class="flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> Date</span>
+                <span id="lb-location" class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Location</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- READ LETTER MODAL -->
+    <div id="letter-modal" class="fixed inset-0 z-50 bg-premiumblack/80 backdrop-blur-md hidden flex items-center justify-center p-4 modal-backdrop">
+        <div class="bg-offwhite rounded-3xl p-6 sm:p-10 max-w-lg w-full shadow-2xl relative border-2 border-pinklight/50 text-center modal-content">
+            <button onclick="closeLetterModal()" class="absolute top-4 right-4 p-2 rounded-full hover:bg-blush text-gray-500 active:scale-95">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            
+            <div class="w-12 h-12 bg-blush text-redromantic rounded-full flex items-center justify-center mx-auto mb-4 border border-pinklight">
+                <i data-lucide="heart" class="w-6 h-6 fill-current"></i>
+            </div>
+
+            <span id="letter-modal-category" class="text-xs font-semibold tracking-widest uppercase text-redromantic">OPEN WHEN...</span>
+            <h3 id="letter-modal-title" class="font-serif text-2xl font-bold text-premiumblack mb-6 mt-1">When You Miss Me</h3>
+
+            <div class="bg-white rounded-2xl p-6 border border-pinklight/30 shadow-inner mb-6 text-left">
+                <p id="letter-modal-body" class="text-sm md:text-base text-gray-700 leading-relaxed italic font-serif">
+                    Message content appears here...
+                </p>
+            </div>
+
+            <div class="flex justify-between items-center text-xs text-gray-400">
+                <span>With all my love, always.</span>
+                <button onclick="editCurrentLetter()" class="text-redromantic underline hover:text-reddeep">Edit Message</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- JAVASCRIPT APP LOGIC                                              -->
+    <!-- ================================================================= -->
+    <script>
+        const DEFAULT_START_DATE = '2024-08-30';
+        const DEFAULT_HERO_IMAGE = 'Media/sandakan.jpeg';
+        const DEFAULT_MEMORIES = [
+            {
+                id: 1,
+                category: 'DATES',
+                title: 'Tunggu di Airport',
+                date: 'DEC 2025',
+                location: 'Kota Kinabalu',
+                image: 'Media/kota kinabalu.jpeg'
+            },
+            {
+                id: 2,
+                category: 'TRAVEL',
+                title: 'Fist time travel',
+                date: 'Jul 2026',
+                location: 'Krabi Thailand',
+                image: 'Media/krabi.jpeg'
+            },
+            {
+                id: 3,
+                category: 'FOOD',
+                title: 'Seoul Garden Time',
+                date: 'Nov 2025',
+                location: 'Summer Mall',
+                image: 'Media/summermall.jpeg'
+            },
+            {
+                id: 4,
+                category: 'CELEBRATIONS',
+                title: 'Convo Sayang',
+                date: 'Nov 2024',
+                location: 'UNIMAS',
+                image: 'Media/convo.jpeg'
+            },
+            {
+                id: 5,
+                category: 'RANDOM',
+                title: 'Jalan di Kuala Lumpur',
+                date: 'Oct 2026',
+                location: 'Kuala Lumpur',
+                image: 'Media/kuala lumpur.jpeg'
+            }
+        ];
+
+        function safeStorageSet(key, value) {
+            try {
+                localStorage.setItem(key, value);
+                return true;
+            } catch (err) {
+                console.warn('Storage limit reached or blocked:', err);
+                return false;
+            }
+        }
+
+        function readImageFileAsDataUrl(file, callback) {
+            if (!file || !file.type.startsWith('image/')) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                callback(evt.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        let appState = {
+            startDate: localStorage.getItem('love_story_start_date') || DEFAULT_START_DATE,
+            heroImage: localStorage.getItem('love_story_hero_image') || DEFAULT_HERO_IMAGE,
+            
+            milestones: [
+                {
+                    id: 1,
+                    date: '25 AUG 2024',
+                    title: 'The Beginning',
+                    location: 'Whatsapp Jer (Sandakan & Mukah)',
+                    photo: 'Media/the begining amirul el.jpeg',
+                    quote: '“Where our story officially started.Ini masa kita mula-mula kenal nasib baik sayang reply chat kmk. Kmk bersyukur sangat-sangat. Kmk pun nanggis masa ni sebab kmk takut gagal dalam relationship.”'
+                },
+                {
+                    id: 2,
+                    date: '5 NOV 2024',
+                    title: 'Our First Date',
+                    location: 'Hoan Gallery',
+                    photo: 'Media/First Date amirulel.jpeg',
+                    quote: '“Our first little adventure together, laughing under the starlight. Masa ni first time jumpa, boleh pulak kmk salah orang astaga. Masa ni juga sampai di Kuching kmk terus bawak makan burger sebab sayang padah sayang suka makan burger. Masa ini kmk sangat risau sebab takut sayang sik suka dengan kmk and tinggalkan kmk selama-lamanya.”'
+                },
+                {
+                    id: 3,
+                    date: '9 NOV 2025',
+                    title: 'One Year of Us',
+                    location: 'Kuching Airport',
+                    photo: 'Media/one year together.jpeg',
+                    quote: '“365 days of smiles, growth, and endless warmth. Masa ni sayang sedihkan, sayang bawak diri. Masa ni mama mek padah sayang manis. Kalau kita nd kuat sekarang tiada sudah kita sama-sama.”'
+                },
+                {
+                    id: 4,
+                    date: 'TODAY',
+                    title: 'Still Choosing You',
+                    location: 'Right Here, Right Now',
+                    photo: 'Media/still choosing you amirul el.jpeg',
+                    quote: '“Every single day is my new favorite memory with you. Sampai sekarang ada masa kita gembira, sedih and ada masa kita bergaduh, terima kasih untuk semua itu. Apa-apa jadi sekali pun kita selalu sama-sama sampai bila-bila.”'
+                }
+            ],
+
+            memories: JSON.parse(localStorage.getItem('love_story_memories')) || DEFAULT_MEMORIES,
+
+            letters: JSON.parse(localStorage.getItem('love_story_letters')) || [
+                {
+                    id: 1,
+                    title: "Open when you miss me",
+                    tag: "MISS YOU",
+                    body: "Whenever you feel a gap beside you, remember that I am thinking of you right at this moment. Distance or busy schedules can never change how deeply you reside in my heart. Close your eyes and feel my embrace!"
+                },
+                {
+                    id: 2,
+                    title: "Open when you're sad",
+                    tag: "NEED A HUG",
+                    body: "It is okay to have tough days, my love. Take a deep breath, wrap yourself in a warm blanket, and remember that tomorrow is a fresh page. I am always here to listen, hold your hand, or just be quiet beside you."
+                },
+                {
+                    id: 3,
+                    title: "Open when you need motivation",
+                    tag: "YOU GOT THIS",
+                    body: "I believe in you more than words can say. You are resilient, incredibly intelligent, and capable of overcoming any challenge ahead. Go shine like you always do!"
+                },
+                {
+                    id: 4,
+                    title: "Open when you can't sleep",
+                    tag: "LULLABY",
+                    body: "Quiet your mind, rest your eyes, and listen to the soft rhythm of the night. Think of our favorite memories together, our laughter, and know that I'm sending you the peacefulest dreams."
+                },
+                {
+                    id: 5,
+                    title: "Open when we argue",
+                    tag: "PEACE",
+                    body: "Even when we disagree, my love for you does not lessen even by a fraction. We are a team, always. Let's take a gentle breather, hug it out, and remember what truly matters: us."
+                }
+            ],
+
+            dateIdeas: [
+                { title: "Main ML sama-sama", desc: "Kalau sayang bosan, sayang ajak kmk ya main ML." },
+                { title: "Sunset Picnic & Painting", desc: "Ini kalau jumpa nanti, boleh kita buat sama sama." },
+                { title: "Tengok bintang di langit yang sama", desc: "Walaupun jauh, kita masih tengok langit dan bintang yang sama, jadi kita dekatla kan." },
+                { title: "Masak sama-sama", desc: "Kita buat makanan sama-sama so nanti boleh video call and sama sama makan sambil bercakap." },
+                { title: "ON CALL", desc: "Kitakan LDR, jadi kalau rindu call ya, kalau kmk sik angkat satu jak tu kmk kerja, tapi kmk usahakan untuk jawab call sayang.Penting ba tu." }
+            ],
+
+            bucketList: JSON.parse(localStorage.getItem('love_story_bucket')) || [
+                { id: 1, text: 'Watch a sunrise at the beach together', completed: true },
+                { id: 2, text: 'Take a spontaneous road trip with no destination', completed: false },
+                { id: 3, text: 'Bake a cake together completely from scratch', completed: false },
+                { id: 4, text: 'Adopt or foster a cute pet together', completed: false }
+            ]
+        };
+
+        const savedCustomMilestones = JSON.parse(localStorage.getItem('love_story_custom_milestones')) || [];
+        if (savedCustomMilestones.length > 0) {
+            appState.milestones = appState.milestones.concat(savedCustomMilestones);
+        }
+
+        let currentLightboxIndex = 0;
+        let activeGalleryCategory = 'ALL';
+        let currentEditingLetterId = null;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            if (sessionStorage.getItem('love_story_authenticated') === 'true') {
+                const overlay = document.getElementById('login-overlay');
+                overlay.classList.add('hidden');
+            }
+
+            if (appState.heroImage) {
+                document.getElementById('hero-couple-img').src = appState.heroImage;
+            }
+
+            updateCounterLabels();
+            startRelationshipCounter();
+            renderTimeline();
+            renderGalleryTabs();
+            renderGalleryGrid();
+            renderLetters();
+            renderBucketList();
+
+            setupScrollSpy();
+        });
+
+        /* ==========================================
+           MUSIC PLAYER CONTROL LOGIC
+           ========================================== */
+        function toggleMusic() {
+            const audio = document.getElementById('bg-music');
+            const statusText = document.getElementById('music-status');
+            const btn = document.getElementById('music-toggle-btn');
+
+            if (audio.paused) {
+                audio.play().then(() => {
+                    statusText.innerText = "Playing ❤️";
+                    btn.classList.remove('bg-redromantic');
+                    btn.classList.add('bg-green-500');
+                }).catch(err => {
+                    console.log("Autoplay restricted or audio file not found:", err);
+                });
+            } else {
+                audio.pause();
+                statusText.innerText = "Paused";
+                btn.classList.remove('bg-green-500');
+                btn.classList.add('bg-redromantic');
+            }
+        }
+
+        /* ==========================================
+           0. LOGIN LOGIC
+           ========================================== */
+        function handleLogin(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('login-username').value.trim();
+            const passwordInput = document.getElementById('login-password').value.trim();
+            const errorMsg = document.getElementById('login-error');
+            const card = document.getElementById('login-card');
+
+            if (usernameInput.toLowerCase() === 'krabi' && passwordInput === '25082024') {
+                sessionStorage.setItem('love_story_authenticated', 'true');
+                errorMsg.classList.add('hidden');
+                
+                confetti({
+                    particleCount: 50,
+                    spread: 60,
+                    origin: { y: 0.6 },
+                    colors: ['#F8B4C8', '#D94F70', '#FCE7EF']
+                });
+
+                const overlay = document.getElementById('login-overlay');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+                setTimeout(() => {
+                    overlay.classList.add('hidden');
+                }, 700);
+            } else {
+                errorMsg.classList.remove('hidden');
+                card.classList.remove('animate-shake');
+                void card.offsetWidth;
+                card.classList.add('animate-shake');
+            }
+        }
+
+        function toggleHint(hintId) {
+            const hintElem = document.getElementById(hintId);
+            hintElem.classList.toggle('hidden');
+        }
+
+        /* ==========================================
+           1. HERO LANDING & IMAGE UPLOAD LOGIC
+           ========================================== */
+        function enterMainStory() {
+            const hero = document.getElementById('hero-screen');
+            const main = document.getElementById('main-content');
+            
+            confetti({
+                particleCount: 70,
+                spread: 80,
+                origin: { y: 0.6 },
+                colors: ['#F8B4C8', '#D94F70', '#FCE7EF']
+            });
+
+            hero.style.transform = 'translate3d(0, -100%, 0)';
+            hero.style.pointerEvents = 'none';
+            main.classList.remove('opacity-0');
+            
+            const audio = document.getElementById('bg-music');
+            audio.play().then(() => {
+                document.getElementById('music-status').innerText = "Playing ❤️";
+                const btn = document.getElementById('music-toggle-btn');
+                btn.classList.remove('bg-redromantic');
+                btn.classList.add('bg-green-500');
+            }).catch(() => {});
+
+            setTimeout(() => {
+                hero.style.position = 'absolute';
+                lucide.createIcons();
+            }, 750);
+        }
+
+        function triggerHeroHeartBurst(e) {
+            createFloatingHeart(e.clientX, e.clientY);
+        }
+
+        function uploadHeroImage(event) {
+            const file = event.target.files[0];
+            readImageFileAsDataUrl(file, (imgUrl) => {
+                document.getElementById('hero-couple-img').src = imgUrl;
+                appState.heroImage = imgUrl;
+                safeStorageSet('love_story_hero_image', imgUrl);
+                confetti({
+                    particleCount: 30,
+                    spread: 50,
+                    colors: ['#F8B4C8', '#D94F70']
+                });
+            });
+            event.target.value = '';
+        }
+
+        /* ==========================================
+           2. RELATIONSHIP TICKER & COUNTER LOGIC
+           ========================================== */
+        function startRelationshipCounter() {
+            updateCounterValues();
+            setInterval(updateCounterValues, 1000);
+        }
+
+        function updateCounterLabels() {
+            const startDate = new Date(appState.startDate);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const formatted = startDate.toLocaleDateString('en-US', options);
+
+            document.getElementById('counter-start-label').innerText = formatted;
+            document.getElementById('display-header-date').innerText = formatted;
+            document.getElementById('hero-date-tag').innerText = `Since ${formatted}`;
+        }
+
+        function updateCounterValues() {
+            const start = new Date(appState.startDate);
+            const now = new Date();
+
+            let diffMs = now - start;
+            if (diffMs < 0) diffMs = 0;
+
+            const secondsTotal = Math.floor(diffMs / 1000);
+            const minutesTotal = Math.floor(secondsTotal / 60);
+            const hoursTotal = Math.floor(minutesTotal / 60);
+            const daysTotal = Math.floor(hoursTotal / 24);
+
+            const years = Math.floor(daysTotal / 365);
+            const months = Math.floor((daysTotal % 365) / 30);
+            const days = Math.floor((daysTotal % 365) % 30);
+            const hours = hoursTotal % 24;
+            const minutes = minutesTotal % 60;
+            const seconds = secondsTotal % 60;
+
+            document.getElementById('counter-years').innerText = String(years).padStart(2, '0');
+            document.getElementById('counter-months').innerText = String(months).padStart(2, '0');
+            document.getElementById('counter-days').innerText = String(days).padStart(2, '0');
+            document.getElementById('counter-hours').innerText = String(hours).padStart(2, '0');
+            document.getElementById('counter-minutes').innerText = String(minutes).padStart(2, '0');
+            document.getElementById('counter-seconds').innerText = String(seconds).padStart(2, '0');
+        }
+
+        function triggerCounterPulse(e) {
+            createFloatingHeart(e.clientX, e.clientY);
+            confetti({
+                particleCount: 25,
+                spread: 40,
+                origin: { x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight },
+                colors: ['#D94F70', '#F8B4C8']
+            });
+        }
+
+        /* ==========================================
+           3. TIMELINE & IMAGE UPLOAD LOGIC
+           ========================================== */
+        function renderTimeline() {
+            const container = document.getElementById('timeline-container');
+            container.innerHTML = '';
+
+            appState.milestones.forEach((item, index) => {
+                const isFirst = index === 0;
+                const node = document.createElement('div');
+                node.className = 'relative group cursor-pointer';
+                node.onclick = () => toggleTimelineExpand(index);
+
+                node.innerHTML = `
+                    <div class="absolute -left-[31px] sm:-left-[41px] top-1.5 w-5 h-5 rounded-full bg-premiumblack border-4 border-pinklight group-hover:bg-redromantic transition duration-300"></div>
+                    
+                    <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-card hover:shadow-xl border border-pinklight/30 transition-all duration-300 transform group-hover:-translate-y-1">
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <span class="text-xs font-bold uppercase tracking-widest text-redromantic bg-blush px-2.5 py-1 rounded-full">${item.date}</span>
+                            <span class="text-xs text-gray-400 flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3"></i> ${item.location || 'Special Place'}</span>
+                        </div>
+                        <h4 class="font-serif text-xl font-bold text-premiumblack mb-2">${item.title}</h4>
+                        <p class="text-xs sm:text-sm text-gray-600 italic font-serif">${item.quote}</p>
+
+                        <div id="tm-expand-${index}" class="${isFirst ? 'block' : 'hidden'} mt-4 pt-4 border-t border-pinklight/20 transition-all duration-300">
+                            ${item.photo ? `<img src="${item.photo}" class="w-full h-48 sm:h-64 object-cover rounded-xl shadow-md mb-3">` : ''}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(node);
+            });
+            lucide.createIcons();
+        }
+
+        function toggleTimelineExpand(index) {
+            const target = document.getElementById(`tm-expand-${index}`);
+            if (target) {
+                target.classList.toggle('hidden');
+            }
+        }
+
+        function updateTimelinePreview(src) {
+            const box = document.getElementById('tm-preview-box');
+            const img = document.getElementById('tm-preview-img');
+            if (src && src.trim() !== '') {
+                img.src = src.trim();
+                box.classList.remove('hidden');
+            } else {
+                img.src = '';
+                box.classList.add('hidden');
+            }
+        }
+
+        function openAddTimelineModal() {
+            updateTimelinePreview('');
+            document.getElementById('timeline-modal').classList.remove('hidden');
+        }
+
+        function closeAddTimelineModal() {
+            document.getElementById('timeline-modal').classList.add('hidden');
+        }
+
+        function handleTimelineFileUpload(e) {
+            const file = e.target.files[0];
+            readImageFileAsDataUrl(file, (dataUrl) => {
+                document.getElementById('tm-photo').value = dataUrl;
+                updateTimelinePreview(dataUrl);
+            });
+        }
+
+        function saveNewTimelineItem(e) {
+            e.preventDefault();
+            const newItem = {
+                id: Date.now(),
+                title: document.getElementById('tm-title').value,
+                date: document.getElementById('tm-date').value,
+                location: document.getElementById('tm-location').value || 'Our Memory',
+                photo: document.getElementById('tm-photo').value.trim() || '',
+                quote: `“${document.getElementById('tm-desc').value}”`
+            };
+
+            appState.milestones.push(newItem);
+            
+            const savedCustoms = JSON.parse(localStorage.getItem('love_story_custom_milestones')) || [];
+            savedCustoms.push(newItem);
+            safeStorageSet('love_story_custom_milestones', JSON.stringify(savedCustoms));
+            
+            renderTimeline();
+            closeAddTimelineModal();
+            document.getElementById('timeline-form').reset();
+            updateTimelinePreview('');
+        }
+
+        /* ==========================================
+           4. GALLERY, UPLOAD & LIGHTBOX LOGIC
+           ========================================== */
+        const GALLERY_CATEGORIES = ['ALL', 'DATES', 'TRAVEL', 'FOOD', 'CELEBRATIONS', 'RANDOM'];
+
+        function renderGalleryTabs() {
+            const tabsContainer = document.getElementById('gallery-tabs');
+            tabsContainer.innerHTML = '';
+
+            GALLERY_CATEGORIES.forEach(cat => {
+                const active = activeGalleryCategory === cat;
+                const btn = document.createElement('button');
+                btn.className = `px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 whitespace-nowrap active:scale-95 ${
+                    active ? 'bg-premiumblack text-white shadow-md' : 'bg-white text-gray-600 hover:bg-blush'
+                }`;
+                btn.innerText = cat === 'RANDOM' ? 'RANDOM MOMENTS' : cat;
+                btn.onclick = () => {
+                    activeGalleryCategory = cat;
+                    renderGalleryTabs();
+                    renderGalleryGrid();
+                };
+                tabsContainer.appendChild(btn);
+            });
+        }
+
+        function renderGalleryGrid() {
+            const grid = document.getElementById('gallery-grid');
+            grid.innerHTML = '';
+
+            const filtered = activeGalleryCategory === 'ALL' 
+                ? appState.memories 
+                : appState.memories.filter(m => m.category === activeGalleryCategory);
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400 text-sm">No memories added under this filter yet.</div>`;
+                return;
+            }
+
+            filtered.forEach((mem) => {
+                const card = document.createElement('div');
+                card.className = 'group relative rounded-2xl overflow-hidden bg-white shadow-card border border-pinklight/30 cursor-pointer transform hover:-translate-y-1 transition-all duration-300 active:scale-98';
+                card.onclick = () => openLightbox(appState.memories.indexOf(mem));
+
+                card.innerHTML = `
+                    <div class="h-64 sm:h-72 overflow-hidden relative">
+                        <img src="${mem.image}" alt="${mem.title}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-premiumblack/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-pinklight">${mem.category}</span>
+                            <h4 class="font-serif text-lg font-bold">${mem.title}</h4>
+                            <div class="flex items-center gap-3 text-xs text-gray-300 mt-1">
+                                <span>${mem.date}</span>
+                                <span>•</span>
+                                <span>${mem.location}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openLightbox(index) {
+            currentLightboxIndex = index;
+            const mem = appState.memories[index];
+            if (!mem) return;
+
+            document.getElementById('lb-img').src = mem.image;
+            document.getElementById('lb-title').innerText = mem.title;
+            document.getElementById('lb-category').innerText = mem.category;
+            document.getElementById('lb-date').innerHTML = `<i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${mem.date}`;
+            document.getElementById('lb-location').innerHTML = `<i data-lucide="map-pin" class="w-3.5 h-3.5"></i> ${mem.location}`;
+
+            document.getElementById('lightbox-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox-modal').classList.add('hidden');
+        }
+
+        function prevLightboxImage() {
+            currentLightboxIndex = (currentLightboxIndex - 1 + appState.memories.length) % appState.memories.length;
+            openLightbox(currentLightboxIndex);
+        }
+
+        function nextLightboxImage() {
+            currentLightboxIndex = (currentLightboxIndex + 1) % appState.memories.length;
+            openLightbox(currentLightboxIndex);
+        }
+
+        function updateMemoryPreview(src) {
+            const box = document.getElementById('mem-preview-box');
+            const img = document.getElementById('mem-preview-img');
+            if (src && src.trim() !== '') {
+                img.src = src.trim();
+                box.classList.remove('hidden');
+            } else {
+                img.src = '';
+                box.classList.add('hidden');
+            }
+        }
+
+        function openAddMemoryModal() {
+            updateMemoryPreview('');
+            document.getElementById('memory-modal').classList.remove('hidden');
+        }
+
+        function closeAddMemoryModal() {
+            document.getElementById('memory-modal').classList.add('hidden');
+        }
+
+        function handleMemoryFileUpload(e) {
+            const file = e.target.files[0];
+            readImageFileAsDataUrl(file, (dataUrl) => {
+                document.getElementById('mem-img-url').value = dataUrl;
+                updateMemoryPreview(dataUrl);
+            });
+        }
+
+        function saveNewMemoryItem(e) {
+            e.preventDefault();
+            const newMem = {
+                id: Date.now(),
+                title: document.getElementById('mem-title').value,
+                category: document.getElementById('mem-category').value,
+                date: document.getElementById('mem-date').value,
+                location: document.getElementById('mem-location').value || 'Special Moment',
+                image: document.getElementById('mem-img-url').value.trim() || 'Media/Photo1.png'
+            };
+
+            appState.memories.unshift(newMem);
+            safeStorageSet('love_story_memories', JSON.stringify(appState.memories));
+            renderGalleryGrid();
+            closeAddMemoryModal();
+            document.getElementById('memory-form').reset();
+            updateMemoryPreview('');
+        }
+
+        /* ==========================================
+           5. OPEN WHEN LETTERS LOGIC
+           ========================================== */
+        function renderLetters() {
+            const container = document.getElementById('letters-grid');
+            container.innerHTML = '';
+
+            appState.letters.forEach((lettr) => {
+                const node = document.createElement('div');
+                node.className = 'glass-card rounded-3xl p-6 border border-pinklight/40 shadow-card flex flex-col justify-between items-center text-center transform hover:-translate-y-1 transition duration-300 active:scale-98';
+                
+                node.innerHTML = `
+                    <div class="w-full flex justify-between items-center mb-4">
+                        <span class="text-[10px] font-bold tracking-widest text-redromantic bg-blush px-2.5 py-1 rounded-full uppercase">${lettr.tag}</span>
+                        <i data-lucide="mail" class="w-5 h-5 text-gray-400"></i>
+                    </div>
+
+                    <div class="my-4">
+                        <h4 class="font-serif text-xl font-bold text-premiumblack mb-2">${lettr.title}</h4>
+                        <p class="text-xs text-gray-500 italic">“Sealed with love. Open whenever you need this.”</p>
+                    </div>
+
+                    <button onclick="openLetterModal(${lettr.id})" class="mt-4 px-6 py-2.5 bg-premiumblack hover:bg-charcoal text-white rounded-full text-xs font-semibold tracking-wider uppercase transition duration-300 shadow-md flex items-center gap-2 active:scale-95">
+                        <i data-lucide="heart" class="w-3.5 h-3.5 text-pinklight fill-current"></i> Open Message
+                    </button>
+                `;
+                container.appendChild(node);
+            });
+            lucide.createIcons();
+        }
+
+        function openLetterModal(id) {
+            const letter = appState.letters.find(l => l.id === id);
+            if (!letter) return;
+
+            currentEditingLetterId = id;
+            document.getElementById('letter-modal-category').innerText = `OPEN WHEN... (${letter.tag})`;
+            document.getElementById('letter-modal-title').innerText = letter.title;
+            document.getElementById('letter-modal-body').innerText = `"${letter.body}"`;
+
+            document.getElementById('letter-modal').classList.remove('hidden');
+
+            confetti({
+                particleCount: 30,
+                spread: 50,
+                origin: { y: 0.5 },
+                colors: ['#F8B4C8', '#D94F70']
+            });
+        }
+
+        function closeLetterModal() {
+            document.getElementById('letter-modal').classList.add('hidden');
+        }
+
+        function editCurrentLetter() {
+            const letter = appState.letters.find(l => l.id === currentEditingLetterId);
+            if (!letter) return;
+
+            const newText = prompt("Edit your special love message:", letter.body);
+            if (newText !== null && newText.trim() !== "") {
+                letter.body = newText.trim();
+                safeStorageSet('love_story_letters', JSON.stringify(appState.letters));
+                document.getElementById('letter-modal-body').innerText = `"${letter.body}"`;
+            }
+        }
+
+        /* ==========================================
+           6. DATE PLANNER & BUCKET LIST
+           ========================================== */
+        function spinRandomDateIdea() {
+            const displayTitle = document.getElementById('date-idea-title');
+            const displayDesc = document.getElementById('date-idea-desc');
+
+            let counter = 0;
+            const interval = setInterval(() => {
+                const rand = appState.dateIdeas[Math.floor(Math.random() * appState.dateIdeas.length)];
+                displayTitle.innerText = `“${rand.title}”`;
+                displayDesc.innerText = rand.desc;
+                counter++;
+                if (counter > 10) {
+                    clearInterval(interval);
+                    confetti({
+                        particleCount: 40,
+                        spread: 60,
+                        colors: ['#F8B4C8', '#D94F70']
+                    });
+                }
+            }, 100);
+        }
+
+        function renderBucketList() {
+            const container = document.getElementById('bucket-list-items');
+            container.innerHTML = '';
+
+            let completedCount = 0;
+
+            appState.bucketList.forEach((item) => {
+                if (item.completed) completedCount++;
+
+                const row = document.createElement('div');
+                row.className = `flex items-center justify-between p-3 rounded-xl border transition-all duration-300 ${
+                    item.completed ? 'bg-white/5 border-white/10 text-gray-400 line-through' : 'bg-premiumblack border-white/20 text-white'
+                }`;
+
+                row.innerHTML = `
+                    <div class="flex items-center gap-3 cursor-pointer" onclick="toggleBucketItem(${item.id})">
+                        <div class="w-5 h-5 rounded-md border flex items-center justify-center transition duration-300 ${
+                            item.completed ? 'bg-pinklight border-pinklight text-premiumblack' : 'border-gray-500'
+                        }">
+                            ${item.completed ? '<i data-lucide="check" class="w-3.5 h-3.5"></i>' : ''}
+                        </div>
+                        <span class="text-xs font-medium">${item.text}</span>
+                    </div>
+                    <button onclick="deleteBucketItem(${item.id})" class="text-gray-500 hover:text-redromantic p-1 active:scale-95">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                `;
+                container.appendChild(row);
+            });
+
+            const total = appState.bucketList.length;
+            const pct = total === 0 ? 0 : Math.round((completedCount / total) * 100);
+            
+            document.getElementById('bucket-list-progress-text').innerText = `${pct}% Completed`;
+            document.getElementById('bucket-progress-bar').style.width = `${pct}%`;
+
+            lucide.createIcons();
+        }
+
+        function toggleBucketItem(id) {
+            const item = appState.bucketList.find(b => b.id === id);
+            if (item) {
+                item.completed = !item.completed;
+                safeStorageSet('love_story_bucket', JSON.stringify(appState.bucketList));
+                renderBucketList();
+            }
+        }
+
+        function addBucketItem() {
+            const input = document.getElementById('new-bucket-input');
+            const text = input.value.trim();
+            if (text) {
+                appState.bucketList.push({
+                    id: Date.now(),
+                    text: text,
+                    completed: false
+                });
+                safeStorageSet('love_story_bucket', JSON.stringify(appState.bucketList));
+                input.value = '';
+                renderBucketList();
+            }
+        }
+
+        function deleteBucketItem(id) {
+            appState.bucketList = appState.bucketList.filter(b => b.id !== id);
+            safeStorageSet('love_story_bucket', JSON.stringify(appState.bucketList));
+            renderBucketList();
+        }
+
+        /* ==========================================
+           7. UTILITY & SETTINGS LOGIC
+           ========================================== */
+        function toggleSettingsModal() {
+            const modal = document.getElementById('settings-modal');
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden')) {
+                document.getElementById('settings-date-input').value = appState.startDate;
+            }
+        }
+
+        function saveSettings() {
+            const newDate = document.getElementById('settings-date-input').value;
+            if (newDate) {
+                appState.startDate = newDate;
+                safeStorageSet('love_story_start_date', newDate);
+                updateCounterLabels();
+                updateCounterValues();
+                toggleSettingsModal();
+            }
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu-modal').classList.toggle('hidden');
+        }
+
+        function createFloatingHeart(x, y) {
+            const container = document.getElementById('particle-container');
+            const heart = document.createElement('div');
+            heart.className = 'fixed text-redromantic pointer-events-none floating-heart-anim z-50';
+            heart.style.left = `${x - 12}px`;
+            heart.style.top = `${y - 12}px`;
+            heart.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+            
+            container.appendChild(heart);
+            setTimeout(() => heart.remove(), 2500);
+        }
+
+        function setupScrollSpy() {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (window.pageYOffset >= (sectionTop - 200)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('text-redromantic');
+                    if (link.getAttribute('data-target') === current) {
+                        link.classList.add('text-redromantic');
+                    }
+                });
+            }, { passive: true });
+        }
+    </script>
+</body>
+</html>
